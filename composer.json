@@ -1,0 +1,20 @@
+{
+    "name": "infrangible/m2-import",
+    "description": "Infrangible Magento 2 Import",
+    "require": {
+        "php": ">=7.1",
+        "magento/framework": "~102.0.0|~103.0.0",
+        "infrangible/m2-foundation": "~2.0"
+    },
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": "MIT",
+    "autoload": {
+        "files": [
+            "src/registration.php"
+        ],
+        "psr-4": {
+            "Infrangible\\Import\\": "src"
+        }
+    }
+}
