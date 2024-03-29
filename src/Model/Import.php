@@ -31,10 +31,10 @@ abstract class Import
     protected $logging;
 
     /** @var Arrays */
-    protected $arrayHelper;
+    protected $arrays;
 
     /** @var Variables */
-    protected $variableHelper;
+    protected $variables;
 
     /** @var Database */
     protected $databaseHelper;
@@ -139,8 +139,8 @@ abstract class Import
         Data $importHelper,
         LoggerInterface $logging
     ) {
-        $this->arrayHelper = $arrays;
-        $this->variableHelper = $variables;
+        $this->arrays = $arrays;
+        $this->variables = $variables;
         $this->databaseHelper = $databaseHelper;
         $this->instanceHelper = $instanceHelper;
         $this->importHelper = $importHelper;
@@ -367,7 +367,7 @@ abstract class Import
                     if (array_key_exists('hash_key', $cacheEntry) && $cacheEntry['hash_key'] === $elementHashKey) {
                         $expiresAt = DateTime::createFromFormat(
                             'Y-m-d H:m:s',
-                            $this->arrayHelper->getValue($cacheEntry, 'expires_at')
+                            $this->arrays->getValue($cacheEntry, 'expires_at')
                         );
 
                         if (array_key_exists('data_hash', $cacheEntry)
@@ -376,7 +376,7 @@ abstract class Import
                             $this->sourceCachedElementNumbers[] = $elementNumber;
                         }
 
-                        $this->sourceCacheIds[$elementNumber] = $this->arrayHelper->getValue($cacheEntry, 'cache_id');
+                        $this->sourceCacheIds[$elementNumber] = $this->arrays->getValue($cacheEntry, 'cache_id');
 
                         unset($sourceElementHashKeyChunk[$elementNumber]);
                     }
@@ -407,8 +407,8 @@ abstract class Import
                 $this->displaySourceInvalidElement(
                     $elementNumber,
                     $element,
-                    $this->arrayHelper->getValue($elementReason, static::REASON),
-                    $this->arrayHelper->getValue($elementReason, static::SEVERITY)
+                    $this->arrays->getValue($elementReason, static::REASON),
+                    $this->arrays->getValue($elementReason, static::SEVERITY)
                 );
             }
         }
@@ -473,7 +473,7 @@ abstract class Import
                     if (array_key_exists('hash_key', $cacheEntry) && $cacheEntry['hash_key'] === $elementHashKey) {
                         $expiresAt = DateTime::createFromFormat(
                             'Y-m-d H:m:s',
-                            $this->arrayHelper->getValue($cacheEntry, 'expires_at')
+                            $this->arrays->getValue($cacheEntry, 'expires_at')
                         );
 
                         if (array_key_exists('data_hash', $cacheEntry)
@@ -483,7 +483,7 @@ abstract class Import
                         }
 
                         $this->transformedCacheIds[$elementNumber] =
-                            $this->arrayHelper->getValue($cacheEntry, 'cache_id');
+                            $this->arrays->getValue($cacheEntry, 'cache_id');
 
                         unset($transformedElementHashKeyChunk[$elementNumber]);
                     }
@@ -522,8 +522,8 @@ abstract class Import
                 $this->displayTransformedInvalidElement(
                     $elementNumber,
                     $element,
-                    $this->arrayHelper->getValue($elementReason, static::REASON),
-                    $this->arrayHelper->getValue($elementReason, static::SEVERITY)
+                    $this->arrays->getValue($elementReason, static::REASON),
+                    $this->arrays->getValue($elementReason, static::SEVERITY)
                 );
             }
         }
@@ -546,8 +546,8 @@ abstract class Import
         $sourceTransformedElementNumbers = [];
 
         foreach ($this->sourceTransformedRelations as $relation) {
-            $sourceElementNumber = $this->arrayHelper->getValue($relation, 'source');
-            $transformedElementNumber = $this->arrayHelper->getValue($relation, 'transformed');
+            $sourceElementNumber = $this->arrays->getValue($relation, 'source');
+            $transformedElementNumber = $this->arrays->getValue($relation, 'transformed');
 
             if (!array_key_exists($sourceElementNumber, $sourceTransformedElementNumbers)) {
                 $sourceTransformedElementNumbers[$sourceElementNumber] = [];
