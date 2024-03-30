@@ -215,6 +215,8 @@ abstract class Import
             return;
         }
 
+        $this->prepareSourceData($remainingSourceData);
+
         $this->sourceTransformedRelations = [];
 
         $this->transformedData = $this->transformData($remainingSourceData);
@@ -419,6 +421,13 @@ abstract class Import
      *
      * @return array
      */
+    abstract protected function prepareSourceData(array $sourceData): array;
+
+    /**
+     * @param array $sourceData
+     *
+     * @return array
+     */
     abstract protected function transformData(array $sourceData): array;
 
     /**
@@ -482,8 +491,7 @@ abstract class Import
                             $this->transformedCachedElementNumbers[] = $elementNumber;
                         }
 
-                        $this->transformedCacheIds[$elementNumber] =
-                            $this->arrays->getValue($cacheEntry, 'cache_id');
+                        $this->transformedCacheIds[$elementNumber] = $this->arrays->getValue($cacheEntry, 'cache_id');
 
                         unset($transformedElementHashKeyChunk[$elementNumber]);
                     }
