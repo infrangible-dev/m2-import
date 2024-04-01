@@ -215,11 +215,11 @@ abstract class Import
             return;
         }
 
-        $this->prepareSourceData($remainingSourceData);
+        $preparedSourceData = $this->prepareSourceData($remainingSourceData);
 
         $this->sourceTransformedRelations = [];
 
-        $this->transformedData = $this->transformData($remainingSourceData);
+        $this->transformedData = $this->transformData($preparedSourceData);
 
         $this->displaySourceInvalidElements();
 
@@ -926,6 +926,14 @@ abstract class Import
         ];
 
         $this->transformedInvalidElementReasons[$elementNumber][] = $invalidElement;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSourceInvalidElementNumbers(): array
+    {
+        return $this->sourceInvalidElementNumbers;
     }
 
     /**
