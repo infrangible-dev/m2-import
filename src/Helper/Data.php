@@ -367,26 +367,46 @@ class Data
     ): bool {
         $attribute = $this->attributeHelper->getAttribute($entityTypeCode, $attributeCode);
 
-        $column = $this->getBackendTableColumn($attribute);
+        if ($attribute->isStatic()) {
+            $attributeType = null;
 
-        if (is_null($attributeValue) && array_key_exists('NULLABLE', $column) && $column['NULLABLE']) {
-            return true;
-        }
+            $entityTableName = $attribute->getEntity()->getEntityTable();
 
-        try {
-            $attributeType = $this->attributeHelper->getAttributeType($entityTypeCode, $attributeCode);
-        } catch (Exception $exception) {
-            $this->logging->error($exception);
+            $describe = $dbAdapter->describeTable($entityTableName);
 
-            return false;
+            foreach ($describe as $column) {
+                if ($column['COLUMN_NAME'] == $attributeCode) {
+                    $attributeType = strtolower($column['DATA_TYPE']);
+                }
+            }
+
+            if ($attributeType === null) {
+                throw new Exception(sprintf('Could not identify type for attribute with code: %s', $attributeCode));
+            }
+        } else {
+            $column = $this->getBackendTableColumn($attribute);
+
+            if (is_null($attributeValue) && array_key_exists('NULLABLE', $column) && $column['NULLABLE']) {
+                return true;
+            }
+
+            try {
+                $attributeType = $this->attributeHelper->getAttributeType($entityTypeCode, $attributeCode);
+            } catch (Exception $exception) {
+                $this->logging->error($exception);
+
+                return false;
+            }
         }
 
         switch ($attributeType) {
             case 'varchar':
                 if (is_array($attributeValue) || is_object($attributeValue)) {
                     $valid = false;
+                } elseif ($attributeValue === null) {
+                    $valid = true;
                 } else {
-                    $value = $this->stringHelper->cleanString($attributeValue);
+                    $value = $this->stringHelper->cleanString(strval($attributeValue));
                     $valid = $this->stringHelper->strlen($value) < AbstractEntity::DB_MAX_VARCHAR_LENGTH;
                 }
                 break;
@@ -401,12 +421,19 @@ class Data
                         $storeId,
                         $attributeValue
                     ) !== null
-                    || $this->attributeHelper->checkAttributeOptionId(
+                    || (is_numeric($attributeValue)
+                        && $this->attributeHelper->checkAttributeOptionId(
+                            $entityTypeCode,
+                            $attributeCode,
+                            $storeId,
+                            $attributeValue
+                        ))
+                    || ($this->attributeHelper->checkAttributeOptionKey(
                         $entityTypeCode,
                         $attributeCode,
                         $storeId,
                         $attributeValue
-                    );
+                    ));
                 if (!$valid && $addUnknownAttributeOptionValues === true) {
                     try {
                         $this->logging->debug(
@@ -449,7 +476,13 @@ class Data
                                 $attributeCode,
                                 $storeId,
                                 $attributeValue
-                            ));
+                            ))
+                        || ($this->attributeHelper->checkAttributeOptionKey(
+                            $entityTypeCode,
+                            $attributeCode,
+                            $storeId,
+                            $attributeValue
+                        ));
                     if (!$singleOptionValid && $addUnknownAttributeOptionValues === true) {
                         try {
                             $this->logging->debug(
@@ -477,18 +510,50 @@ class Data
                     $valid = $valid && $singleOptionValid;
                 }
                 break;
+            case 'tinyint':
+            case 'smallint':
+            case 'mediumint':
             case 'int':
-                $value = trim($attributeValue);
-                $valid = (int) $value == $value;
+            case 'bigint':
+                if ($attributeValue === null) {
+                    $valid = true;
+                } else {
+                    $value = is_string($attributeValue) ? trim($attributeValue) : $attributeValue;
+                    $valid = (int) $value == $value;
+                }
                 break;
             case 'datetime':
-                $value = trim($attributeValue);
-                $valid = strtotime($value)
-                    || preg_match('/^\d{2}.\d{2}.\d{2,4}(?:\s+\d{1,2}.\d{1,2}(?:.\d{1,2})?)?$/', $value);
+                if ($attributeValue === null) {
+                    $valid = true;
+                } else {
+                    $value = is_string($attributeValue) ? trim($attributeValue) : $attributeValue;
+                    $valid = strtotime($value)
+                        || preg_match('/^\d{2}.\d{2}.\d{2,4}(?:\s+\d{1,2}.\d{1,2}(?:.\d{1,2})?)?$/', $value);
+                }
                 break;
             case 'text':
-                $value = $this->stringHelper->cleanString($attributeValue);
-                $valid = $this->stringHelper->strlen($value) < AbstractEntity::DB_MAX_TEXT_LENGTH;
+                if ($attributeValue === null) {
+                    $valid = true;
+                } else {
+                    $value = $this->stringHelper->cleanString($attributeValue);
+                    $valid = $this->stringHelper->strlen($value) < AbstractEntity::DB_MAX_TEXT_LENGTH;
+                }
+                break;
+            case 'mediumtext':
+                if ($attributeValue === null) {
+                    $valid = true;
+                } else {
+                    $value = $this->stringHelper->cleanString($attributeValue);
+                    $valid = $this->stringHelper->strlen($value) < 16777215;
+                }
+                break;
+            case 'longtext':
+                if ($attributeValue === null) {
+                    $valid = true;
+                } else {
+                    $value = $this->stringHelper->cleanString($attributeValue);
+                    $valid = $this->stringHelper->strlen($value) < 4294967295;
+                }
                 break;
             default:
                 $valid = true;

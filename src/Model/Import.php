@@ -735,20 +735,20 @@ abstract class Import
     }
 
     /**
-     * @param array $element
+     * @param array $sourceElement
      *
      * @return string
      */
-    abstract protected function getSourceElementHashKey(array $element): string;
+    abstract protected function getSourceElementHashKey(array $sourceElement): string;
 
     /**
-     * @param mixed $element
+     * @param mixed $sourceElement
      *
      * @return string
      */
-    protected function getSourceElementHashValue($element): string
+    protected function getSourceElementHashValue($sourceElement): string
     {
-        return md5(json_encode($element));
+        return md5(json_encode($sourceElement));
     }
 
     /**
