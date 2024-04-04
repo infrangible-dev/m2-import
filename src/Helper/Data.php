@@ -411,8 +411,12 @@ class Data
                 }
                 break;
             case 'decimal':
-                $value = trim($attributeValue);
-                $valid = (float) $value == $value;
+                if ($attributeValue === null) {
+                    $valid = true;
+                } else {
+                    $value = is_string($attributeValue) ? trim($attributeValue) : $attributeValue;
+                    $valid = (float) $value == $value;
+                }
                 break;
             case 'select':
                 $valid = $this->attributeHelper->getAttributeOptionId(
