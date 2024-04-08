@@ -378,7 +378,8 @@ abstract class Import
                             $this->sourceCachedElementNumbers[] = $elementNumber;
                         }
 
-                        $this->sourceCacheIds[$elementNumber] = $this->arrays->getValue($cacheEntry, 'cache_id');
+                        $this->sourceCacheIds[$elementNumber] =
+                            intval($this->arrays->getValue($cacheEntry, 'cache_id'));
 
                         unset($sourceElementHashKeyChunk[$elementNumber]);
                     }
@@ -491,7 +492,8 @@ abstract class Import
                             $this->transformedCachedElementNumbers[] = $elementNumber;
                         }
 
-                        $this->transformedCacheIds[$elementNumber] = $this->arrays->getValue($cacheEntry, 'cache_id');
+                        $this->transformedCacheIds[$elementNumber] =
+                            intval($this->arrays->getValue($cacheEntry, 'cache_id'));
 
                         unset($transformedElementHashKeyChunk[$elementNumber]);
                     }
