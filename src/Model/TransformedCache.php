@@ -2,37 +2,38 @@
 
 declare(strict_types=1);
 
+/**
+ * @author      Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ */
+
 namespace Infrangible\Import\Model;
 
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Model\AbstractModel;
 
 /**
- * @author      Andreas Knollmann
- * @copyright   Copyright (c) 2014-2024 Softwareentwicklung Andreas Knollmann
- * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ * An entry of the cache of transformed elements: the hash of the data of an element by prefix and key.
  *
- * @method  int getCacheId()
- * @method  void setCacheId(int $cacheId)
- * @method  string getPrefix()
- * @method  void setPrefix(string $prefix)
- * @method  string getHashKey()
- * @method  void setHashKey(string $hashKey)
- * @method  string getDataHash()
- * @method  void setDataHash(string $dataHash)
- * @method  string getCreatedAt()
- * @method  void setCreatedAt(string $createdAt)
- * @method  string getUpdatedAt()
- * @method  void setUpdatedAt(string $updatedAt)
- * @method  string getExpiresAt()
- * @method  void setExpiresAt(string $expiresAt)
+ * @method string getPrefix()
+ * @method $this setPrefix(string $prefix)
+ * @method string getHashKey()
+ * @method $this setHashKey(string $hashKey)
+ * @method string getDataHash()
+ * @method $this setDataHash(string $dataHash)
+ * @method string getExpiresAt()
+ * @method $this setExpiresAt(string $expiresAt)
  */
-class TransformedCache
-    extends AbstractModel
+class TransformedCache extends AbstractModel
 {
     /**
+     * Initializes the resource model.
+     *
      * @return void
+     * @throws LocalizedException
      */
-    protected function _construct()
+    protected function _construct(): void
     {
         $this->_init(ResourceModel\TransformedCache::class);
     }

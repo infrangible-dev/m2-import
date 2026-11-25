@@ -1,0 +1,47 @@
+{
+    "import_source_cache": {
+        "column": {
+            "cache_id": true,
+            "prefix": true,
+            "hash_key": true,
+            "data_hash": true,
+            "created_at": true,
+            "updated_at": true,
+            "expires_at": true
+        },
+        "index": {
+            "IMPORT_SOURCE_CACHE_EXPIRES_AT": true,
+            "expires_at": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "IMPORT_SOURCE_CACHE_PREFIX_HASH_KEY": true,
+            "unique_data_hash": true
+        }
+    },
+    "import_transformed_cache": {
+        "column": {
+            "cache_id": true,
+            "prefix": true,
+            "hash_key": true,
+            "data_hash": true,
+            "created_at": true,
+            "updated_at": true,
+            "expires_at": true
+        },
+        "index": {
+            "IMPORT_TRANSFORMED_CACHE_EXPIRES_AT": true,
+            "expires_at": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "IMPORT_TRANSFORMED_CACHE_PREFIX_HASH_KEY": true,
+            "unique_data_hash": true
+        }
+    },
+    "catalog_product_entity_media_gallery": {
+        "column": {
+            "hash": true
+        }
+    }
+}
